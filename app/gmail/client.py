@@ -22,7 +22,7 @@ class GmailClient:
         )
 
         return response.get("messages", [])
-    
+
     def get_message(self, message_id: str):
         """Fetch a full Gmail message by ID."""
         return (
