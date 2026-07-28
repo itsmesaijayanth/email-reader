@@ -1,6 +1,9 @@
 from googleapiclient.discovery import build
 
+from app.contracts.gmail import GmailMessage
 from app.gmail.auth import get_credentials
+from app.gmail.parser import EmailParser
+from app.models.email import Email
 
 
 class GmailClient:
@@ -8,22 +11,23 @@ class GmailClient:
         credentials = get_credentials()
         self.service = build("gmail", "v1", credentials=credentials)
 
-    def get_unread_messages(self, max_results: int = 10):
-        """Return unread message IDs."""
-        response = (
-            self.service.users()
-            .messages()
-            .list(
-                userId="me",
-                q="is:unread",
-                maxResults=max_results,
-            )
-            .execute()
-        )
+    def get_unread_emails(self) -> list[Email]:
+        """Fetch all unread emails."""
 
-        return response.get("messages", [])
+        messages = self.get_unread_messages()
 
-    def get_message(self, message_id: str):
+        emails: list[Email] = []
+
+        for message in messages:
+            raw_message = self.get_message(message["id"])
+            emails.append(EmailParser.parse(raw_message))
+
+        return emails
+
+    def get_message(
+        self,
+        message_id: str,
+    ) -> GmailMessage:
         """Fetch a full Gmail message by ID."""
         return (
             self.service.users()
