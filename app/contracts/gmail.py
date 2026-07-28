@@ -1,6 +1,11 @@
 from typing import NotRequired, TypedDict
 
 
+class GmailMessageReference(TypedDict):
+    id: str
+    threadId: str
+
+
 class GmailHeader(TypedDict):
     name: str
     value: str

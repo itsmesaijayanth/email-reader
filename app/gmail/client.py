@@ -1,6 +1,8 @@
+from collections.abc import Iterator
+
 from googleapiclient.discovery import build
 
-from app.contracts.gmail import GmailMessage
+from app.contracts.gmail import GmailMessage, GmailMessageReference
 from app.gmail.auth import get_credentials
 from app.gmail.parser import EmailParser
 from app.models.email import Email
@@ -11,24 +13,43 @@ class GmailClient:
         credentials = get_credentials()
         self.service = build("gmail", "v1", credentials=credentials)
 
-    def get_unread_emails(self) -> list[Email]:
-        """Fetch all unread emails."""
+    def iter_unread_emails(
+        self,
+        max_results: int = 10,
+    ) -> Iterator[Email]:
+        """Yield unread emails one at a time."""
 
-        messages = self.get_unread_messages()
-
-        emails: list[Email] = []
+        messages = self._get_unread_messages(max_results)
 
         for message in messages:
-            raw_message = self.get_message(message["id"])
-            emails.append(EmailParser.parse(raw_message))
+            raw_message = self._get_message(message["id"])
+            yield EmailParser.parse(raw_message)
 
-        return emails
+    def _get_unread_messages(
+        self,
+        max_results: int = 10,
+    ) -> list[GmailMessageReference]:
+        """Fetch metadata for unread Gmail messages."""
 
-    def get_message(
+        response = (
+            self.service.users()
+            .messages()
+            .list(
+                userId="me",
+                labelIds=["UNREAD"],
+                maxResults=max_results,
+            )
+            .execute()
+        )
+
+        return response.get("messages", [])
+
+    def _get_message(
         self,
         message_id: str,
     ) -> GmailMessage:
         """Fetch a full Gmail message by ID."""
+
         return (
             self.service.users()
             .messages()

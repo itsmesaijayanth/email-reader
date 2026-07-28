@@ -1,12 +1,10 @@
 from app.gmail.client import GmailClient
 
 
-def main():
+def main() -> None:
     gmail = GmailClient()
 
-    emails = gmail.get_unread_emails()
-
-    for email in emails:
+    for email in gmail.iter_unread_emails(max_results=5):
         print(f"Subject : {email.subject}")
         print(f"From    : {email.sender}")
         print(f"Date    : {email.date}")
