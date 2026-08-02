@@ -9,11 +9,17 @@ from app.logging.logger import logger
 class AutomationPipeline:
     """Orchestrates a complete automation run."""
 
-    def __init__(self) -> None:
-        self._gmail = GmailClient()
-        self._summarizer = EmailSummarizer()
-        self._generator = DigestGenerator()
-        self._formatter = DigestFormatter()
+    def __init__(
+        self,
+        gmail: GmailClient,
+        summarizer: EmailSummarizer,
+        generator: DigestGenerator,
+        formatter: DigestFormatter,
+    ) -> None:
+        self._gmail = gmail
+        self._summarizer = summarizer
+        self._generator = generator
+        self._formatter = formatter
 
     def run(self) -> None:
         logger.info("Starting automation run")
@@ -29,7 +35,7 @@ class AutomationPipeline:
         for email in emails:
             try:
                 logger.info(
-                    "Processing email: %s",
+                    "Processing: %s",
                     email.subject,
                 )
 
@@ -39,19 +45,18 @@ class AutomationPipeline:
 
                 self._gmail.mark_as_read(email.id)
 
-                logger.info(
-                    "Processed successfully: %s",
-                    email.subject,
-                )
-
             except Exception:
                 logger.exception(
-                    "Failed processing email: %s",
+                    "Failed processing: %s",
                     email.subject,
                 )
 
-        digest = self._generator.generate(analyses)
+        digest = self._generator.generate(
+            analyses,
+        )
 
-        print(self._formatter.format(digest))
+        print(
+            self._formatter.format(digest),
+        )
 
         logger.info("Automation run completed")
