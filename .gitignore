@@ -28,3 +28,6 @@ coverage.xml
 *.log
 
 credentials/
+
+app/temp.py
+message.txt
