@@ -9,7 +9,11 @@ def make_summary(
     action_required=False,
 ):
     return EmailSummary(
-        summary="summary",
+        subject="Test Subject",
+        sender="alice@example.com",
+        recipient="bob@example.com",
+        date="2026-08-02",
+        summary="Summary",
         category=category,
         priority=priority,
         sentiment="neutral",

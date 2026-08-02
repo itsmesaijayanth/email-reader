@@ -23,6 +23,10 @@ class EmailSummarizer:
         response = self._client.generate_json(prompt)
 
         return EmailSummary(
+            subject=email.subject,
+            sender=email.sender,
+            recipient=email.recipient,
+            date=email.date,
             summary=response["summary"],
             category=response["category"],
             priority=response["priority"],
