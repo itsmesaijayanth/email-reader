@@ -1,22 +1,33 @@
-from dataclasses import dataclass, field
+from pydantic import BaseModel, Field
 
 
-@dataclass(slots=True, frozen=True)
-class EmailSummary:
+class EmailSummary(BaseModel):
     """Structured AI analysis of an email."""
 
-    # Original email metadata
     subject: str
+
     sender: str
+
     recipient: str
+
     date: str
 
-    # AI analysis
-    summary: str
+    summary: str = Field(
+        description="Concise summary under 100 words.",
+    )
+
     category: str
+
     priority: str
+
     sentiment: str
+
     action_required: bool
 
-    action_items: list[str] = field(default_factory=list)
-    tags: list[str] = field(default_factory=list)
+    action_items: list[str] = Field(
+        default_factory=list,
+    )
+
+    tags: list[str] = Field(
+        default_factory=list,
+    )
