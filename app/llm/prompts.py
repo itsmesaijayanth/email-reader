@@ -1,22 +1,70 @@
-SUMMARY_PROMPT = """
-You are an expert executive assistant.
+from string import Template
 
-Summarize the following email.
+EMAIL_ANALYSIS_PROMPT = Template(
+    """
+You are an intelligent email assistant.
 
-Requirements:
-- Keep the summary under 100 words.
-- Preserve important names, dates, deadlines, and action items.
+Analyze the following email and return ONLY valid JSON.
+
+Schema:
+
+{
+  "summary": "...",
+  "category": "...",
+  "priority": "...",
+  "sentiment": "...",
+  "action_required": true,
+  "action_items": [],
+  "tags": []
+}
+
+Rules:
+
+- Return valid JSON only.
+- Do not wrap the response in markdown.
+- Summary must be under 100 words.
 - Ignore greetings and signatures.
-- Use concise professional language.
+- Preserve important names, dates, deadlines, and action items.
 
-Email:
+Category must be one of:
+
+- Work
+- Personal
+- Billing
+- Banking
+- Shopping
+- Marketing
+- Travel
+- Social
+- Security
+- Education
+- Healthcare
+- Other
+
+Priority must be one of:
+
+- low
+- medium
+- high
+- critical
+
+Sentiment must be one of:
+
+- positive
+- neutral
+- negative
+
+Action items should contain only concrete actions.
+
+Email
 
 Subject:
-{subject}
+$subject
 
 From:
-{sender}
+$sender
 
 Body:
-{body}
+$body
 """.strip()
+)

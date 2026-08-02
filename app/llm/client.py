@@ -1,3 +1,4 @@
+import json
 import os
 
 from dotenv import load_dotenv
@@ -7,26 +8,28 @@ load_dotenv()
 
 
 class GeminiClient:
-    """Thin wrapper around the Gemini API."""
+    """Gemini API client."""
 
     def __init__(self) -> None:
         api_key = os.getenv("GEMINI_API_KEY")
+
         if not api_key:
-            raise ValueError("GEMINI_API_KEY is not set.")
+            raise ValueError("GEMINI_API_KEY is not configured.")
+
+        self._client = genai.Client(api_key=api_key)
 
         self._model = os.getenv(
             "GEMINI_MODEL",
             "gemini-2.5-flash-lite",
         )
 
-        self._client = genai.Client(api_key=api_key)
-
-    def generate(self, prompt: str) -> str:
-        """Generate text using Gemini."""
-
+    def generate_json(
+        self,
+        prompt: str,
+    ) -> dict:
         response = self._client.models.generate_content(
             model=self._model,
             contents=prompt,
         )
 
-        return response.text or ""
+        return json.loads(response.text)
