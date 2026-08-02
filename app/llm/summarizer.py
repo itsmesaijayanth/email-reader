@@ -20,14 +20,13 @@ class EmailSummarizer:
             body=email.body,
         )
 
-        response = self._client.generate_json(prompt)
+        analysis = self._client.analyze_email(prompt)
 
-        return EmailSummary(
-            summary=response["summary"],
-            category=response["category"],
-            priority=response["priority"],
-            sentiment=response["sentiment"],
-            action_required=response["action_required"],
-            action_items=response["action_items"],
-            tags=response["tags"],
+        return analysis.model_copy(
+            update={
+                "subject": email.subject,
+                "sender": email.sender,
+                "recipient": email.recipient,
+                "date": email.date,
+            }
         )
