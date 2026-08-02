@@ -60,3 +60,22 @@ class GmailClient:
             )
             .execute()
         )
+
+    def mark_as_read(
+        self,
+        message_id: str,
+    ) -> None:
+        """Mark a Gmail message as read."""
+
+        (
+            self.service.users()
+            .messages()
+            .modify(
+                userId="me",
+                id=message_id,
+                body={
+                    "removeLabelIds": ["UNREAD"],
+                },
+            )
+            .execute()
+        )

@@ -10,10 +10,15 @@ def main() -> None:
     generator = DigestGenerator()
     formatter = DigestFormatter()
 
-    analyses = [
-        summarizer.summarize(email)
-        for email in gmail.iter_unread_emails(max_results=10)
-    ]
+    emails = list(gmail.iter_unread_emails(max_results=10))
+
+    analyses = []
+
+    for email in emails:
+        analysis = summarizer.summarize(email)
+        analyses.append(analysis)
+
+        gmail.mark_as_read(email.id)
 
     digest = generator.generate(analyses)
 
