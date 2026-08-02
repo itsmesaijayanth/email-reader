@@ -18,10 +18,7 @@ class GeminiClient:
 
         self._client = genai.Client(api_key=api_key)
 
-        self._model = os.getenv(
-            "GEMINI_MODEL",
-            "gemini-2.5-flash-lite",
-        )
+        self._model = os.getenv("GEMINI_MODEL")
 
     def generate_json(
         self,
