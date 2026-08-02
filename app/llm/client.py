@@ -1,24 +1,22 @@
 import json
-import os
 
-from dotenv import load_dotenv
 from google import genai
 
-load_dotenv()
+from app.config.settings import settings
 
 
 class GeminiClient:
     """Gemini API client."""
 
     def __init__(self) -> None:
-        api_key = os.getenv("GEMINI_API_KEY")
+        api_key = settings.gemini_api_key
 
         if not api_key:
             raise ValueError("GEMINI_API_KEY is not configured.")
 
         self._client = genai.Client(api_key=api_key)
 
-        self._model = os.getenv("GEMINI_MODEL")
+        self._model = settings.gemini_model
 
     def generate_json(
         self,

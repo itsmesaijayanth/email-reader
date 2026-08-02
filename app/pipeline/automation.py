@@ -1,3 +1,4 @@
+from app.config.settings import settings
 from app.digest.formatter import DigestFormatter
 from app.digest.generator import DigestGenerator
 from app.gmail.client import GmailClient
@@ -16,7 +17,7 @@ class AutomationPipeline:
     def run(self) -> None:
         emails = list(
             self._gmail.iter_unread_emails(
-                max_results=10,
+                max_results=settings.gmail_max_results,
             )
         )
 
